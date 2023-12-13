@@ -1,0 +1,82 @@
+<html>
+<head>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=0">
+<meta charset="utf-8" />
+<link rel="stylesheet" href="css/core.css">
+<link rel="stylesheet" href="css/main.css">
+<style>
+.feed .text2 {
+	float:left;
+	width:100%;
+	margin:10px 0px 30px 0px;
+	padding: 0px 16px;
+	border-sizing: border-box;
+	font-size:1.0em;
+}
+</style>
+<title>MySNS</title
+
+</head>
+<body>
+	<div class="page-hdr">MySNS</div>
+	<div class="page-body">
+		<div class="page-mnu">
+			<div class="menu" onclick="cancel()">삭제하기</div>
+			<div class="menu" onclick="change()">수정하기</div>
+			</div>
+		<div id="content" class="section"></div>
+	</div>
+</body>
+</html>
+
+<script src ="js/jquery-3.6.0.min.js"></script>
+<script src="js/core.js"></script>
+<script>
+	$(document).ready(function() {
+	   Page.init(start, "feedView.html");
+	});
+	var num =0;
+	var did="";
+	var con="";
+	function start(uid, feed) {
+	  did=uid;
+	  console.log(feed);
+	  $("#content").append(getFeedCode(feed));
+	}
+	function getFeedCode(feed){
+	num = feed.no;
+	con = feed.content;
+	var name = (feed.user == null) ? feed.id : feed.user.name;
+	var str = "<div class='feed'>";
+	str += "<div class='author'>";
+	str += "<div class='photo'></div>";
+	str += "<div class='name'>" + name + "</div>";
+	str += "</div>";
+	str += "<div class='text2'>" + feed.content + "</div>";
+	if (feed.images != null) {
+		var imgurl = "images/" + feed.images[0];
+		str += "<div class='image' style='background-image: url(\"" + imgurl + "\")'></div>";
+		}
+	return str;
+    }
+    
+	function cancel(){
+	AJAX.call("jsp/cancel.jsp",{no:num,id:did},function(data){
+		var code = data.trim();
+		if(code=="OK"){
+				alert("삭제가 완료되었습니다");
+				DataCache.remove("mainCache")
+				window.location.href="main.html";
+		}
+			else if(code=="ER"){
+				alert("해당 게시물 권한이 없습니다.");
+		}
+	 
+  });
+ }
+ function change(){
+	 window.location.href="change.html?num="+num;
+ }
+ 
+
+    </script>

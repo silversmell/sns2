@@ -1,0 +1,78 @@
+<html>
+<head>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=0">
+<meta charset="utf-8" />
+<link rel="stylesheet" href="css/core.css">
+<link rel="stylesheet" href="css/main.css">
+<style>
+.feed .text2 {
+	float:left;
+	width:100%;
+	margin:10px 0px 30px 0px;
+	padding: 0px 16px;
+	border-sizing: border-box;
+	font-size:1.0em;
+}
+</style>
+<title>MySNS</title
+
+</head>
+<body>
+	<div class="page-hdr">MySNS</div>
+	<div class="page-body">
+		<input id="id" type="text" placeholder="아이디 (이메일주소)">
+	    <input type="submit" class="mtop-20" value="찾기" onclick="found()"> 
+		<div id="content" class="section"></div>
+	</div>
+</body>
+</html>
+
+<script src ="js/jquery-3.6.0.min.js"></script>
+<script src="js/core.js"></script>
+<script>
+	function found(){
+		var id =$("#id").val().trim();		
+		if(id ==""){
+			alert("아이디를 입력해 주세요.");
+			$("#id").focus();
+			return;
+			}
+			else{
+				start1(id);
+			}
+	}
+	var myId = null;
+    function start1(uid) {
+	myId = uid;
+	AJAX.call("jsp/found.jsp", {id:uid}, function(data) {
+		var list = JSON.parse(data.trim());
+		show(list);
+		});
+	}
+	function show(list){
+	var str=""
+	for(var i = 0;i<list.length;i++){
+		if(list[i].id==myId) {
+		str+=getFeedCode(list[i]);
+		}
+	}
+		$("#content").append(str);
+}
+    
+	function getFeedCode(feed){
+	var name = (feed.user == null) ? feed.id : feed.user.name;
+	var str = "<div class='feed'>";
+	str += "<div class='author'>";
+	str += "<div class='photo'></div>";
+	str += "<div class='name'>" + name + "</div>";
+	str += "</div>";
+	str += "<div class='text2'>" + feed.content + "</div>";
+	if (feed.images != null) {
+		var imgurl = "images/" + feed.images[0];
+		str += "<div class='image' style='background-image: url(\"" + imgurl + "\")'></div>";
+		}
+	
+	str += "</div>";
+	return str;
+}
+</script>
